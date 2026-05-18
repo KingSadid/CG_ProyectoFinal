@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Microscopio Digital de Fractales</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div id="app">
+    <aside id="sidebar" class="sidebar">
+      <header class="sidebar-header">
+        <h1>MICROSCOPIO DIGITAL</h1>
+        <span class="subtitle">Unidad de Analisis Fractal</span>
+      </header>
+
+      <section class="card" id="card-muestra">
+        <h2>Muestra</h2>
+        <div id="widget-fractal-type"></div>
+        <div id="widget-iterations"></div>
+        <div id="widget-julia-real"></div>
+        <div id="widget-julia-imag"></div>
+      </section>
+
+      <section class="card" id="card-transform">
+        <h2>Transformacion</h2>
+        <div id="widget-tx"></div>
+        <div id="widget-ty"></div>
+        <div id="widget-scale"></div>
+        <div id="widget-rotation"></div>
+      </section>
+
+      <section class="card" id="card-luz">
+        <h2>Ajustes de Luz</h2>
+        <div id="widget-brightness"></div>
+        <div id="widget-contrast"></div>
+      </section>
+
+      <section class="card" id="card-freq">
+        <h2>Lentes / Frecuencia</h2>
+        <div id="widget-freq-type"></div>
+        <div id="widget-freq-intensity"></div>
+      </section>
+
+      <section class="card" id="card-tint">
+        <h2>Tincion Quimica</h2>
+        <div id="widget-tint-r"></div>
+        <div id="widget-tint-g"></div>
+        <div id="widget-tint-b"></div>
+        <div id="widget-tint-a"></div>
+      </section>
+
+      <section class="card" id="card-noise">
+        <h2>Ruido Ambiental</h2>
+        <div id="widget-noise"></div>
+      </section>
+
+      <section class="card" id="card-export">
+        <h2>Evidencia</h2>
+        <div id="widget-download"></div>
+      </section>
+    </aside>
+
+    <main id="viewport" class="viewport">
+      <div class="canvas-container">
+        <canvas id="microscope-canvas"></canvas>
+        <div class="overlay-hud">
+          <span class="hud-text">MODO: ANALISIS</span>
+          <span class="hud-text" id="hud-resolution">1920x1080</span>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script type="module" src="js/core/App.js"></script>
+</body>
+</html>
