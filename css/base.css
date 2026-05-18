@@ -1,0 +1,101 @@
+/* base.css — Tokens de diseño y reset */
+
+:root {
+    --bg-base: #0b0d10;
+    --bg-elevated: #12141a;
+    --surface-primary: #161820;
+    --surface-secondary: #1c1f27;
+
+    --text-primary: #e8e6e3;
+    --text-secondary: #9fa3ad;
+    --text-tertiary: #6b7080;
+
+    --accent: #3ba99f;
+    --accent-dim: rgba(59, 169, 159, 0.15);
+    --accent-hover: #4dcfc3;
+
+    --border-subtle: rgba(255, 255, 255, 0.06);
+    --border-medium: rgba(255, 255, 255, 0.10);
+    --border-strong: rgba(255, 255, 255, 0.18);
+
+    --font-head: 'Space Grotesk', sans-serif;
+    --font-body: 'Space Grotesk', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    /* espaciado compacto para no-scroll */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.625rem;
+    --space-4: 0.875rem;
+    --space-5: 1rem;
+    --space-6: 1.25rem;
+    --space-8: 1.5rem;
+
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+
+    --z-base: 0;
+    --z-canvas: 10;
+    --z-float: 20;
+    --z-panel: 30;
+    --z-header: 40;
+    --z-overlay: 50;
+
+    /* easing fuerte (emil-design-eng) */
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+
+    --shadow-diffuse: 0 16px 32px -12px rgba(0, 0, 0, 0.40);
+    --shadow-glow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    font-family: var(--font-body);
+    background: var(--bg-base);
+    color: var(--text-primary);
+    line-height: 1.45;
+    height: 100dvh;
+    overflow: hidden;
+    text-rendering: optimizeLegibility;
+}
+
+/* fondo de rejilla sutil, no interactivo */
+.ambient-grid {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-base);
+    pointer-events: none;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.012) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.012) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(ellipse at center, black 25%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 25%, transparent 75%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

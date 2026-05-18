@@ -1,50 +1,75 @@
-// Filtro de frecuencia por convolucion 3x3: High-pass y Low-pass.
-import { Filter } from './Filter.js';
+// FrequencyFilter.js — filtros de frecuencia espacial via convolución 3x3
+// low: box blur (promedio vecinos).
+// high: unsharp mask. 1) borrosa la imagen (low-pass), 2) resta del original para obtener
+//    las altas frecuencias (bordes), 3) suma esas altas de vuelta al original para aumentar
+//    la nitidez sin romper los colores.
 
-export class FrequencyFilter extends Filter {
-  constructor() {
-    super();
-    this.kernels = {
-      highpass: [0, -1, 0, -1, 5, -1, 0, -1, 0],
-      lowpass: [1/9, 1/9, 1/9, 1/9, 1/9, 1/9, 1/9, 1/9, 1/9]
-    };
-  }
+import { PixelFilterBase } from './PixelFilterBase.js';
+import { ColorUtils } from '../utils/ColorUtils.js';
 
-  apply(imageData, type, intensity) {
-    if (intensity <= 0) return;
+export class FrequencyFilter extends PixelFilterBase {
+    constructor(type, strength = 0.8) {
+        super();
+        this.type = type;
+        this.strength = strength; // cuánto del paso alto sumamos de vuelta (0..1+)
+    }
 
-    const { width, height, data } = imageData;
-    const kernel = this.kernels[type];
-    if (!kernel) return;
-
-    const output = new Uint8ClampedArray(data.length);
-
-    for (let y = 0; y < height; y++) {
-      for (let x = 0; x < width; x++) {
-        let r = 0, g = 0, b = 0;
-
-        for (let ky = -1; ky <= 1; ky++) {
-          for (let kx = -1; kx <= 1; kx++) {
-            const py = this._clamp(y + ky, 0, height - 1);
-            const px = this._clamp(x + kx, 0, width - 1);
-            const idx = (py * width + px) * 4;
-            const kVal = kernel[(ky + 1) * 3 + (kx + 1)];
-            r += data[idx] * kVal;
-            g += data[idx + 1] * kVal;
-            b += data[idx + 2] * kVal;
-          }
+    // sobreescribo apply porque el high-pass necesita dos pasadas (original + borroso)
+    apply(imageData) {
+        if (this.type === 'low') {
+            // box blur directo sobre el array original
+            this._applyBoxBlur(imageData.data, imageData.width, imageData.height);
+            return;
         }
 
-        const idx = (y * width + x) * 4;
-        output[idx] = this._clamp(data[idx] * (1 - intensity) + r * intensity);
-        output[idx + 1] = this._clamp(data[idx + 1] * (1 - intensity) + g * intensity);
-        output[idx + 2] = this._clamp(data[idx + 2] * (1 - intensity) + b * intensity);
-        output[idx + 3] = data[idx + 3];
-      }
+        // --- High-Pass via Unsharp Mask ---
+        const w = imageData.width;
+        const h = imageData.height;
+        const orig = imageData.data;
+
+        // 1) clonar y borrosar
+        const blurred = new Uint8ClampedArray(orig);
+        this._applyBoxBlur(blurred, w, h);
+
+        // 2) unsharp mask: resultado = original + fuerza * (original - borroso)
+        //    (original - borroso) = paso alto (las diferencias = detalles y bordes)
+        const k = this.strength;
+        for (let i = 0; i < orig.length; i += 4) {
+            const r = orig[i]   + (orig[i]   - blurred[i])   * k;
+            const g = orig[i+1] + (orig[i+1] - blurred[i+1]) * k;
+            const b = orig[i+2] + (orig[i+2] - blurred[i+2]) * k;
+            orig[i]   = ColorUtils.clampByte(r);
+            orig[i+1] = ColorUtils.clampByte(g);
+            orig[i+2] = ColorUtils.clampByte(b);
+            // alpha se conserva
+        }
     }
 
-    for (let i = 0; i < data.length; i++) {
-      data[i] = output[i];
+    // método dummy para mantener la firma de la clase base (nunca se usa en modo high)
+    processPixel(r, g, b, a) { return { r, g, b, a }; }
+
+    // box blur 3x3 in-place sobre un Uint8ClampedArray
+    _applyBoxBlur(data, w, h) {
+        // necesito un buffer auxiliar porque no puedo leer y escribir
+        // el mismo array simultáneamente sin contaminar los vecinos
+        const tmp = new Uint8ClampedArray(data);
+        for (let y = 0; y < h; y++) {
+            for (let x = 0; x < w; x++) {
+                const idx = (y * w + x) * 4;
+                let sr = 0, sg = 0, sb = 0, count = 0;
+                for (let ky = -1; ky <= 1; ky++) {
+                    for (let kx = -1; kx <= 1; kx++) {
+                        const nx = x + kx, ny = y + ky;
+                        if (nx >= 0 && nx < w && ny >= 0 && ny < h) {
+                            const ni = (ny * w + nx) * 4;
+                            sr += tmp[ni]; sg += tmp[ni+1]; sb += tmp[ni+2]; count++;
+                        }
+                    }
+                }
+                data[idx]   = sr / count;
+                data[idx+1] = sg / count;
+                data[idx+2] = sb / count;
+            }
+        }
     }
-  }
 }

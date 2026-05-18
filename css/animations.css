@@ -1,0 +1,158 @@
+/* animations.css — micro-interacciones y transiciones */
+
+/* entrada escalonada con transition (más interrumpible que keyframes) */
+.panel-left .panel-section,
+.panel-right .panel-section {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.45s var(--ease-out), transform 0.45s var(--ease-out);
+}
+
+.panel-left .panel-section:nth-child(1) {
+    transition-delay: 40ms;
+}
+
+.panel-left .panel-section:nth-child(3) {
+    transition-delay: 100ms;
+}
+
+.panel-right .panel-section:nth-child(1) {
+    transition-delay: 80ms;
+}
+
+.panel-right .panel-section:nth-child(3) {
+    transition-delay: 160ms;
+}
+
+.panel-right .panel-section:nth-child(5) {
+    transition-delay: 240ms;
+}
+
+/* se activan al montar la página via clase loaded (js la pone) */
+body.is-loaded .panel-left .panel-section,
+body.is-loaded .panel-right .panel-section {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.app-header {
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity 0.4s var(--ease-out), transform 0.4s var(--ease-out);
+}
+
+body.is-loaded .app-header {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* botón CTA: micro-bounce en hover, scale en active */
+.cta-button {
+    transition: transform 160ms var(--ease-out), background 160ms var(--ease-out), box-shadow 160ms var(--ease-out);
+}
+
+.cta-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(59, 169, 159, 0.22);
+}
+
+.cta-button:active {
+    transform: scale(0.97);
+    box-shadow: 0 2px 6px rgba(59, 169, 159, 0.12);
+}
+
+/* icon buttons */
+.icon-btn {
+    transition: transform 120ms var(--ease-out), background 120ms var(--ease-out), color 120ms;
+}
+
+.icon-btn:hover {
+    background: rgba(255, 255, 255, 0.07);
+    transform: scale(1.04);
+}
+
+.icon-btn:active {
+    transform: scale(0.96);
+}
+
+/* sliders */
+input[type="range"] {
+    transition: opacity 0.15s;
+}
+
+input[type="range"]:hover {
+    opacity: 1;
+}
+
+/* toggle buttons */
+.toggle-btn {
+    transition: background 0.15s var(--ease-out), color 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+
+.toggle-btn[data-active="true"] {
+    animation: pulseGlow 2.2s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 5px var(--accent);
+    }
+
+    50% {
+        box-shadow: 0 0 11px var(--accent);
+    }
+}
+
+/* color pickers */
+input[type="color"] {
+    transition: transform 0.15s var(--ease-out), box-shadow 0.15s;
+    cursor: pointer;
+}
+
+input[type="color"]:hover {
+    transform: scale(1.04);
+    box-shadow: 0 0 0 2px var(--accent-dim);
+}
+
+/* select */
+select {
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+select:focus {
+    box-shadow: 0 0 0 2px var(--accent-dim);
+}
+
+/* estado loading del botón generar */
+.cta-button.is-loading {
+    position: relative;
+    color: transparent;
+    pointer-events: none;
+}
+
+.cta-button.is-loading::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.10) 50%, transparent 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+/* overlay */
+.canvas-overlay {
+    transition: opacity 0.3s var(--ease-out), visibility 0.3s;
+}

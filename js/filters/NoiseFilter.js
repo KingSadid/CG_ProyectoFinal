@@ -1,16 +1,18 @@
-// Filtro de ruido aleatorio sobre los canales RGB.
-import { Filter } from './Filter.js';
+// NoiseFilter.js — inyecta ruido aleatorio uniforme sobre los canales RGB
 
-export class NoiseFilter extends Filter {
-  apply(imageData, intensity) {
-    if (intensity <= 0) return;
-    const data = imageData.data;
+import { PixelFilterBase } from './PixelFilterBase.js';
+import { ColorUtils } from '../utils/ColorUtils.js';
 
-    for (let i = 0; i < data.length; i += 4) {
-      const noise = (Math.random() - 0.5) * amount * 2;
-      data[i] = this._clamp(data[i] + noise);
-      data[i + 1] = this._clamp(data[i + 1] + noise);
-      data[i + 2] = this._clamp(data[i + 2] + noise);
+export class NoiseFilter extends PixelFilterBase {
+    constructor(intensity) { super(); this.intensity = Math.max(0, Math.min(100, intensity)); }
+
+    processPixel(r, g, b, a) {
+        if (this.intensity === 0) return { r, g, b, a };
+        const max = this.intensity * 1.5;
+        return {
+            r: ColorUtils.clampByte(r + (Math.random() - 0.5) * max),
+            g: ColorUtils.clampByte(g + (Math.random() - 0.5) * max),
+            b: ColorUtils.clampByte(b + (Math.random() - 0.5) * max), a,
+        };
     }
-  }
 }

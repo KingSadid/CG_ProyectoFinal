@@ -1,77 +1,205 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Microscopio Digital de Fractales</title>
-  <link rel="stylesheet" href="css/styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AetherMap — Generador de Cartografía</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/glassmorphism.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/components.css">
 </head>
 <body>
-  <div id="app">
-    <aside id="sidebar" class="sidebar">
-      <header class="sidebar-header">
-        <h1>MICROSCOPIO DIGITAL</h1>
-        <span class="subtitle">Unidad de Analisis Fractal</span>
-      </header>
 
-      <section class="card" id="card-muestra">
-        <h2>Muestra</h2>
-        <div id="widget-fractal-type"></div>
-        <div id="widget-iterations"></div>
-        <div id="widget-julia-real"></div>
-        <div id="widget-julia-imag"></div>
-      </section>
+    <div class="ambient-grid" aria-hidden="true"></div>
 
-      <section class="card" id="card-transform">
-        <h2>Transformacion</h2>
-        <div id="widget-tx"></div>
-        <div id="widget-ty"></div>
-        <div id="widget-scale"></div>
-        <div id="widget-rotation"></div>
-      </section>
-
-      <section class="card" id="card-luz">
-        <h2>Ajustes de Luz</h2>
-        <div id="widget-brightness"></div>
-        <div id="widget-contrast"></div>
-      </section>
-
-      <section class="card" id="card-freq">
-        <h2>Lentes / Frecuencia</h2>
-        <div id="widget-freq-type"></div>
-        <div id="widget-freq-intensity"></div>
-      </section>
-
-      <section class="card" id="card-tint">
-        <h2>Tincion Quimica</h2>
-        <div id="widget-tint-r"></div>
-        <div id="widget-tint-g"></div>
-        <div id="widget-tint-b"></div>
-        <div id="widget-tint-a"></div>
-      </section>
-
-      <section class="card" id="card-noise">
-        <h2>Ruido Ambiental</h2>
-        <div id="widget-noise"></div>
-      </section>
-
-      <section class="card" id="card-export">
-        <h2>Evidencia</h2>
-        <div id="widget-download"></div>
-      </section>
-    </aside>
-
-    <main id="viewport" class="viewport">
-      <div class="canvas-container">
-        <canvas id="microscope-canvas"></canvas>
-        <div class="overlay-hud">
-          <span class="hud-text">MODO: ANALISIS</span>
-          <span class="hud-text" id="hud-resolution">1920x1080</span>
+    <header class="app-header glass-panel" id="appHeader">
+        <div class="header-brand">
+            <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                <path d="M2 17l10 5 10-5"/>
+                <path d="M2 12l10 5 10-5"/>
+            </svg>
+            <h1 class="brand-title">AetherMap</h1>
         </div>
-      </div>
-    </main>
-  </div>
+        <div class="header-meta">
+            <span class="seed-badge" id="seedDisplay">Seed: —</span>
+            <span class="status-dot" id="statusDot" data-state="idle"></span>
+            <span class="status-text" id="statusText">Listo para generar</span>
+        </div>
+    </header>
 
-  <script type="module" src="js/core/App.js"></script>
+    <main class="app-layout">
+
+        <aside class="side-panel panel-left" id="panelLeft">
+            <div class="panel-section">
+                <h2 class="panel-heading">Origen del Mundo</h2>
+                <button class="cta-button" id="btnGenerate">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/><path d="M9 12l2 2 4-4"/></svg>
+                    Generar Mundo
+                </button>
+                <div class="control-group">
+                    <label for="roughness">Rugosidad</label>
+                    <input type="range" id="roughness" min="0.1" max="2.0" step="0.05" value="0.8">
+                    <span class="value-hint" id="roughnessValue">0.80</span>
+                </div>
+                <div class="control-group">
+                    <label for="waterLevel">Nivel del mar</label>
+                    <input type="range" id="waterLevel" min="0.1" max="0.6" step="0.01" value="0.35">
+                    <span class="value-hint" id="waterLevelValue">0.35</span>
+                </div>
+            </div>
+
+            <div class="panel-divider"></div>
+
+            <div class="panel-section">
+                <h2 class="panel-heading">Biomas</h2>
+                <div class="biome-control">
+                    <span class="biome-label">Agua profunda</span>
+                    <input type="color" id="colorDeepWater" value="#1a3a5c">
+                    <span class="hex-preview" id="hexDeepWater">#1a3a5c</span>
+                </div>
+                <div class="biome-control">
+                    <span class="biome-label">Agua</span>
+                    <input type="color" id="colorShallowWater" value="#2e6b8a">
+                    <span class="hex-preview" id="hexShallowWater">#2e6b8a</span>
+                </div>
+                <div class="biome-control">
+                    <span class="biome-label">Arena</span>
+                    <input type="color" id="colorSand" value="#c2a878">
+                    <span class="hex-preview" id="hexSand">#c2a878</span>
+                </div>
+                <div class="biome-control">
+                    <span class="biome-label">Bosque</span>
+                    <input type="color" id="colorForest" value="#3d6b46">
+                    <span class="hex-preview" id="hexForest">#3d6b46</span>
+                </div>
+                <div class="biome-control">
+                    <span class="biome-label">Montaña</span>
+                    <input type="color" id="colorMountain" value="#6b5c4e">
+                    <span class="hex-preview" id="hexMountain">#6b5c4e</span>
+                </div>
+                <div class="biome-control">
+                    <span class="biome-label">Nieve</span>
+                    <input type="color" id="colorSnow" value="#e8e4df">
+                    <span class="hex-preview" id="hexSnow">#e8e4df</span>
+                </div>
+            </div>
+        </aside>
+
+        <section class="canvas-hero" id="canvasHero">
+            <canvas id="mainCanvas" width="257" height="257" aria-label="Vista del mapa generado"></canvas>
+
+            <div class="canvas-overlay" id="canvasOverlay">
+                <div class="overlay-content">
+                    <svg class="overlay-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                        <path d="M2 17l10 5 10-5"/>
+                        <path d="M2 12l10 5 10-5"/>
+                    </svg>
+                    <h2 class="overlay-title">Cartografía Online</h2>
+                    <p class="overlay-body">Presiona <strong>Generar Mundo</strong> para generar un mundo aleatorio.</p>
+                </div>
+            </div>
+
+            <div class="canvas-nav-float" id="canvasNav">
+                <button class="icon-btn" id="btnResetView" title="Restablecer vista" aria-label="Restablecer vista">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12a9 9 0 1018 0 9 9 0 00-18 0z"/><path d="M3 12h2.5"/><path d="M20.5 12H21"/></svg>
+                </button>
+                <button class="icon-btn" id="btnZoomIn" title="Acercar" aria-label="Acercar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg>
+                </button>
+                <button class="icon-btn" id="btnZoomOut" title="Alejar" aria-label="Alejar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M8 11h6"/></svg>
+                </button>
+                <div class="nav-divider"></div>
+                <button class="icon-btn" id="btnRotateLeft" title="Rotar izquierda" aria-label="Rotar izquierda">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12a9 9 0 1018 0 9 9 0 00-18 0z"/><path d="M9 12l-3-3m0 0l3-3m-3 3h6"/></svg>
+                </button>
+                <button class="icon-btn" id="btnRotateRight" title="Rotar derecha" aria-label="Rotar derecha">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12a9 9 0 1018 0 9 9 0 00-18 0z"/><path d="M15 12l3-3m0 0l-3-3m3 3h-6"/></svg>
+                </button>
+            </div>
+
+            <div class="canvas-coords" id="canvasCoords" aria-hidden="true">
+                <span id="coordX">0</span>, <span id="coordY">0</span>
+            </div>
+        </section>
+
+        <aside class="side-panel panel-right" id="panelRight">
+            <div class="panel-section">
+                <h2 class="panel-heading">Transformación 2D</h2>
+                <div class="readout-grid">
+                    <div class="readout"><span class="readout-label">Zoom</span><span class="readout-value" id="readoutZoom">1.00x</span></div>
+                    <div class="readout"><span class="readout-label">Rotación</span><span class="readout-value" id="readoutRotate">0 deg</span></div>
+                    <div class="readout"><span class="readout-label">Paneo X</span><span class="readout-value" id="readoutPanX">0</span></div>
+                    <div class="readout"><span class="readout-label">Paneo Y</span><span class="readout-value" id="readoutPanY">0</span></div>
+                </div>
+                <p class="panel-subtext hint">Scroll: zoom | Arrastrar: paneo | Shift+arrastrar: rotar</p>
+            </div>
+
+            <div class="panel-divider"></div>
+
+            <div class="panel-section">
+                <h2 class="panel-heading">Filtros</h2>
+                <div class="control-group">
+                    <label for="brightness">Brillo</label>
+                    <input type="range" id="brightness" min="-100" max="100" step="1" value="0">
+                    <span class="value-hint" id="brightnessValue">0</span>
+                </div>
+                <div class="control-group">
+                    <label for="contrast">Contraste</label>
+                    <input type="range" id="contrast" min="-100" max="100" step="1" value="0">
+                    <span class="value-hint" id="contrastValue">0</span>
+                </div>
+                <div class="control-group">
+                    <label for="noise">Ruido</label>
+                    <input type="range" id="noise" min="0" max="100" step="1" value="0">
+                    <span class="value-hint" id="noiseValue">0</span>
+                </div>
+
+                <div class="filter-actions">
+                    <button class="secondary-button" id="btnApplyFilters">Aplicar</button>
+                    <button class="ghost-button" id="btnResetFilters">Reset</button>
+                </div>
+
+                <div class="filter-toggle-group">
+                    <button class="toggle-btn" id="btnLowPass" data-active="false">Low-Pass</button>
+                    <button class="toggle-btn" id="btnHighPass" data-active="false">High-Pass</button>
+                </div>
+            </div>
+
+            <div class="panel-divider"></div>
+
+            <div class="panel-section">
+                <h2 class="panel-heading">Exportar</h2>
+                <div class="control-group">
+                    <label for="exportFormat">Formato</label>
+                    <select id="exportFormat">
+                        <option value="image/png">PNG</option>
+                        <option value="image/jpeg">JPEG</option>
+                        <option value="image/webp">WebP</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="exportQuality">Calidad</label>
+                    <input type="range" id="exportQuality" min="0.1" max="1.0" step="0.05" value="0.92">
+                    <span class="value-hint" id="qualityValue">0.92</span>
+                </div>
+                <button class="cta-button cta-secondary" id="btnDownload">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+                    Descargar
+                </button>
+            </div>
+        </aside>
+    </main>
+
+    <script type="module" src="js/main.js"></script>
 </body>
 </html>
