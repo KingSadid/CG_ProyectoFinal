@@ -1,10 +1,8 @@
+// Controlador de la vista principal. Ensambla widgets y expone el estado global de la UI.
 import { SliderWidget } from '../widgets/SliderWidget.js';
 import { ButtonWidget } from '../widgets/ButtonWidget.js';
+import { SelectWidget } from '../widgets/SelectWidget.js';
 
-/**
- * MainScreen - Controlador de la vista principal.
- * Ensambla todos los widgets en el sidebar y expone el estado global de la UI.
- */
 export class MainScreen {
   constructor(onStateChange) {
     this.onStateChange = onStateChange;
@@ -32,19 +30,24 @@ export class MainScreen {
   }
 
   _initWidgets() {
-    // --- Tarjeta: Muestra ---
-    this.fractalTypeBtn = new ButtonWidget('widget-fractal-type', {
-      label: 'Mandelbrot',
-      activeLabel: 'Julia',
-      type: 'toggle',
-      onClick: (isJulia) => {
-        this.state.fractalType = isJulia ? 'julia' : 'mandelbrot';
+    this.fractalSelect = new SelectWidget('widget-fractal-type', {
+      label: 'Tipo de Muestra',
+      options: [
+        { value: 'mandelbrot', label: 'Mandelbrot' },
+        { value: 'julia', label: 'Julia' },
+        { value: 'burningship', label: 'Burning Ship' },
+        { value: 'tricorn', label: 'Tricorn' },
+        { value: 'multibrot', label: 'Multibrot (p=3)' }
+      ],
+      value: 'mandelbrot',
+      onChange: (v) => {
+        this.state.fractalType = v;
+        const isJulia = v === 'julia';
         this.juliaRealSlider.setVisible(isJulia);
         this.juliaImagSlider.setVisible(isJulia);
         this._notify('fractalType');
       }
     });
-    this.fractalTypeBtn.setActive(false);
 
     this.iterSlider = new SliderWidget('widget-iterations', {
       label: 'Iteraciones',
@@ -66,7 +69,6 @@ export class MainScreen {
     });
     this.juliaImagSlider.setVisible(false);
 
-    // --- Tarjeta: Transformacion ---
     this.txSlider = new SliderWidget('widget-tx', {
       label: 'Traslacion X',
       min: -1000, max: 1000, step: 10, value: 0, realtime: true,
@@ -91,7 +93,6 @@ export class MainScreen {
       onChange: (v) => { this.state.rotation = v; this._notify('rotation'); }
     });
 
-    // --- Tarjeta: Luz ---
     this.brightnessSlider = new SliderWidget('widget-brightness', {
       label: 'Brillo',
       min: -100, max: 100, step: 1, value: 0, realtime: false,
@@ -104,7 +105,6 @@ export class MainScreen {
       onChange: (v) => { this.state.contrast = v; this._notify('contrast'); }
     });
 
-    // --- Tarjeta: Frecuencia ---
     this.freqBtn = new ButtonWidget('widget-freq-type', {
       label: 'High-pass',
       activeLabel: 'Low-pass',
@@ -121,7 +121,6 @@ export class MainScreen {
       onChange: (v) => { this.state.freqIntensity = v; this._notify('freqIntensity'); }
     });
 
-    // --- Tarjeta: Tincion ---
     this.tintRSlider = new SliderWidget('widget-tint-r', {
       label: 'Tincion R',
       min: 0, max: 255, step: 1, value: 0, realtime: false,
@@ -146,14 +145,12 @@ export class MainScreen {
       onChange: (v) => { this.state.tintA = v; this._notify('tint'); }
     });
 
-    // --- Tarjeta: Ruido ---
     this.noiseSlider = new SliderWidget('widget-noise', {
       label: 'Ruido Ambiental',
       min: 0, max: 100, step: 1, value: 0, realtime: false,
       onChange: (v) => { this.state.noise = v; this._notify('noise'); }
     });
 
-    // --- Tarjeta: Evidencia ---
     this.downloadBtn = new ButtonWidget('widget-download', {
       label: 'Descargar Evidencia',
       type: 'action',

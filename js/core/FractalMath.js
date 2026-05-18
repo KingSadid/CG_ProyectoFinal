@@ -1,26 +1,17 @@
+// Generador algoritmico de fractales: Mandelbrot, Julia, Burning Ship, Tricorn y Multibrot.
 export class FractalMath {
   constructor(width, height) {
     this.width = width;
     this.height = height;
-    // Canvas off-screen exclusivo para el fractal original
     this.canvas = document.createElement('canvas');
     this.canvas.width = width;
     this.canvas.height = height;
     this.ctx = this.canvas.getContext('2d', { willReadFrequently: true });
   }
 
-  /**
-   * Genera el fractal (Mandelbrot o Julia) y lo dibuja en el canvas interno.
-   * @param {string} type - 'mandelbrot' | 'julia'
-   * @param {number} maxIter - Iteraciones maximas
-   * @param {object} juliaC - Constante compleja para Julia {r, i}
-   * @returns {HTMLCanvasElement} Canvas con el fractal renderizado
-   */
   generate(type, maxIter, juliaC) {
     const imgData = this.ctx.createImageData(this.width, this.height);
     const data = imgData.data;
-
-    // Rango del plano complejo (vista por defecto del Mandelbrot)
     const xMin = -2.5, xMax = 1.0;
     const yMin = -1.2, yMax = 1.2;
 
@@ -30,25 +21,46 @@ export class FractalMath {
         const y0 = yMin + (py / this.height) * (yMax - yMin);
 
         let zx, zy, cx, cy;
+        let iter = 0;
 
         if (type === 'julia') {
-          zx = x0;
-          zy = y0;
-          cx = juliaC.r;
-          cy = juliaC.i;
+          zx = x0; zy = y0;
+          cx = juliaC.r; cy = juliaC.i;
         } else {
-          zx = 0;
-          zy = 0;
-          cx = x0;
-          cy = y0;
+          zx = 0; zy = 0;
+          cx = x0; cy = y0;
         }
 
-        let iter = 0;
-        while (zx * zx + zy * zy < 4 && iter < maxIter) {
-          const xtemp = zx * zx - zy * zy + cx;
-          zy = 2 * zx * zy + cy;
-          zx = xtemp;
-          iter++;
+        if (type === 'burningship') {
+          while (zx * zx + zy * zy < 4 && iter < maxIter) {
+            const xtemp = zx * zx - zy * zy + cx;
+            zy = Math.abs(2 * zx * zy) + cy;
+            zx = Math.abs(xtemp);
+            iter++;
+          }
+        } else if (type === 'tricorn') {
+          while (zx * zx + zy * zy < 4 && iter < maxIter) {
+            const xtemp = zx * zx - zy * zy + cx;
+            zy = -2 * zx * zy + cy;
+            zx = xtemp;
+            iter++;
+          }
+        } else if (type === 'multibrot') {
+          while (zx * zx + zy * zy < 4 && iter < maxIter) {
+            const r = Math.sqrt(zx * zx + zy * zy);
+            const theta = Math.atan2(zy, zx);
+            const xtemp = Math.pow(r, 3) * Math.cos(3 * theta) + cx;
+            zy = Math.pow(r, 3) * Math.sin(3 * theta) + cy;
+            zx = xtemp;
+            iter++;
+          }
+        } else {
+          while (zx * zx + zy * zy < 4 && iter < maxIter) {
+            const xtemp = zx * zx - zy * zy + cx;
+            zy = 2 * zx * zy + cy;
+            zx = xtemp;
+            iter++;
+          }
         }
 
         const [r, g, b] = this._getColor(iter, maxIter);
@@ -64,15 +76,9 @@ export class FractalMath {
     return this.canvas;
   }
 
-  /**
-   * Mapea iteraciones de escape a un gradiente de color Cian -> Azul -> Magenta.
-   */
   _getColor(iter, maxIter) {
-    if (iter === maxIter) {
-      return [0, 0, 0]; // Interior del fractal: negro absoluto
-    }
+    if (iter === maxIter) return [0, 0, 0];
     const t = iter / maxIter;
-    // Gradiente suavizado para evitar bandas de color
     const smoothT = Math.pow(t, 0.85);
     const r = Math.floor(this._lerp(0, 255, smoothT));
     const g = Math.floor(this._lerp(255, 0, Math.pow(smoothT, 0.9)));

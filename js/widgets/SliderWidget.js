@@ -1,16 +1,5 @@
+// Componente generico de input tipo range con label y valor numerico.
 export class SliderWidget {
-  /**
-   * @param {string} containerId - ID del elemento DOM donde montar el widget
-   * @param {object} options
-   * @param {string} options.label - Texto descriptivo
-   * @param {number} options.min
-   * @param {number} options.max
-   * @param {number} options.step
-   * @param {number} options.value - Valor inicial
-   * @param {boolean} [options.realtime=false] - Si true, onChange se dispara en 'input'; si false, solo en 'change'
-   * @param {function} [options.onChange] - Callback al confirmar el valor (soltar slider o input en tiempo real)
-   * @param {function} [options.onInput] - Callback en cada tick del slider (solo actualizacion visual)
-   */
   constructor(containerId, options) {
     this.container = document.getElementById(containerId);
     if (!this.container) {

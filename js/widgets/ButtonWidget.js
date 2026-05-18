@@ -1,12 +1,5 @@
+// Componente de boton con soporte para modo accion o toggle.
 export class ButtonWidget {
-  /**
-   * @param {string} containerId - ID del elemento DOM donde montar el widget
-   * @param {object} options
-   * @param {string} options.label - Texto del boton
-   * @param {string} [options.type='action'] - 'action' | 'toggle'
-   * @param {string} [options.activeLabel] - Texto alternativo cuando esta activo (solo toggle)
-   * @param {function} [options.onClick] - Callback al hacer click
-   */
   constructor(containerId, options) {
     this.container = document.getElementById(containerId);
     if (!this.container) {

@@ -1,9 +1,3 @@
-/* ==========================================
-   Microscopio Digital de Fractales - Styles
-   Tema: Dark Mode / Sci-Fi Laboratory
-   ========================================== */
-
-/* Reset y Base */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -20,7 +14,6 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Layout Principal */
 #app {
   display: grid;
   grid-template-columns: 380px 1fr;
@@ -28,7 +21,6 @@ html, body {
   width: 100vw;
 }
 
-/* Sidebar (Panel de Control) */
 .sidebar {
   background-color: #161B22;
   border-right: 1px solid #30363D;
@@ -61,7 +53,6 @@ html, body {
   text-transform: uppercase;
 }
 
-/* Tarjetas de Control */
 .card {
   background-color: #0D1117;
   border: 1px solid #30363D;
@@ -71,7 +62,6 @@ html, body {
   animation: slideInRight 0.6s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
 }
 
-/* Staggered delays */
 #card-muestra     { animation-delay: 0.1s; }
 #card-transform  { animation-delay: 0.2s; }
 #card-luz        { animation-delay: 0.3s; }
@@ -91,7 +81,6 @@ html, body {
   padding-left: 10px;
 }
 
-/* Widgets Genericos */
 .widget {
   margin-bottom: 14px;
 }
@@ -117,7 +106,6 @@ html, body {
   font-size: 0.85rem;
 }
 
-/* Inputs tipo Range (Perillas del Microscopio) */
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
@@ -163,7 +151,6 @@ input[type="range"]:focus::-webkit-slider-thumb {
   box-shadow: 0 0 0 2px #0D1117, 0 0 0 4px rgba(0, 255, 157, 0.4);
 }
 
-/* Botones (Neon / Laser) */
 .btn {
   width: 100%;
   padding: 12px;
@@ -198,7 +185,27 @@ input[type="range"]:focus::-webkit-slider-thumb {
   border-color: #00FF9D;
 }
 
-/* Viewport Principal (Lente) */
+.select-widget {
+  background-color: #0D1117;
+  text-align: left;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.select-widget:hover {
+  border-color: #00FF9D;
+}
+
+.select-widget:focus {
+  box-shadow: 0 0 8px rgba(0, 255, 157, 0.2);
+}
+
+.select-widget option {
+  background-color: #161B22;
+  color: #E6EDF3;
+  font-size: 0.85rem;
+}
+
 .viewport {
   position: relative;
   background-color: #000;
@@ -224,7 +231,6 @@ input[type="range"]:focus::-webkit-slider-thumb {
   box-shadow: 0 0 60px rgba(0, 255, 157, 0.05);
 }
 
-/* Efecto de Escaneo / Calibracion CRT */
 .canvas-container::after {
   content: '';
   position: absolute;
@@ -243,7 +249,6 @@ input[type="range"]:focus::-webkit-slider-thumb {
   z-index: 10;
 }
 
-/* HUD Overlay */
 .overlay-hud {
   position: absolute;
   bottom: 28px;
@@ -262,7 +267,6 @@ input[type="range"]:focus::-webkit-slider-thumb {
   letter-spacing: 2px;
 }
 
-/* Keyframes de Animacion */
 @keyframes slideInRight {
   from {
     opacity: 0;
@@ -291,7 +295,6 @@ input[type="range"]:focus::-webkit-slider-thumb {
   }
 }
 
-/* Scrollbar Personalizada */
 .sidebar::-webkit-scrollbar {
   width: 6px;
 }
@@ -309,7 +312,6 @@ input[type="range"]:focus::-webkit-slider-thumb {
   background: #00FF9D;
 }
 
-/* Utilidades */
 .hidden {
   display: none !important;
 }

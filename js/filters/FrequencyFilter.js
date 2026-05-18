@@ -1,24 +1,12 @@
+// Filtro de frecuencia por convolucion 3x3: High-pass y Low-pass.
 import { Filter } from './Filter.js';
 
-/**
- * Filtro de Frecuencia (Convolution Kernel).
- * Implementa High-pass (realce de bordes) y Low-pass (desenfoque)
- * via matrices de convolucion 3x3.
- */
 export class FrequencyFilter extends Filter {
   constructor() {
     super();
     this.kernels = {
-      highpass: [
-        0, -1,  0,
-       -1,  5, -1,
-        0, -1,  0
-      ],
-      lowpass: [
-        1/9, 1/9, 1/9,
-        1/9, 1/9, 1/9,
-        1/9, 1/9, 1/9
-      ]
+      highpass: [0, -1, 0, -1, 5, -1, 0, -1, 0],
+      lowpass: [1/9, 1/9, 1/9, 1/9, 1/9, 1/9, 1/9, 1/9, 1/9]
     };
   }
 
@@ -30,7 +18,6 @@ export class FrequencyFilter extends Filter {
     if (!kernel) return;
 
     const output = new Uint8ClampedArray(data.length);
-    const k = kernel;
 
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
@@ -41,7 +28,7 @@ export class FrequencyFilter extends Filter {
             const py = this._clamp(y + ky, 0, height - 1);
             const px = this._clamp(x + kx, 0, width - 1);
             const idx = (py * width + px) * 4;
-            const kVal = k[(ky + 1) * 3 + (kx + 1)];
+            const kVal = kernel[(ky + 1) * 3 + (kx + 1)];
             r += data[idx] * kVal;
             g += data[idx + 1] * kVal;
             b += data[idx + 2] * kVal;
@@ -49,7 +36,6 @@ export class FrequencyFilter extends Filter {
         }
 
         const idx = (y * width + x) * 4;
-        // Mezcla entre la imagen original y el resultado filtrado segun intensidad
         output[idx] = this._clamp(data[idx] * (1 - intensity) + r * intensity);
         output[idx + 1] = this._clamp(data[idx + 1] * (1 - intensity) + g * intensity);
         output[idx + 2] = this._clamp(data[idx + 2] * (1 - intensity) + b * intensity);
@@ -57,7 +43,6 @@ export class FrequencyFilter extends Filter {
       }
     }
 
-    // Copiar resultado de vuelta al ImageData original
     for (let i = 0; i < data.length; i++) {
       data[i] = output[i];
     }

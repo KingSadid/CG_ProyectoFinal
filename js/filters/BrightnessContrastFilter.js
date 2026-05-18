@@ -1,9 +1,6 @@
+// Filtro de ajuste de brillo y contraste fotografico.
 import { Filter } from './Filter.js';
 
-/**
- * Filtro de Brillo y Contraste.
- * Aplica formulas estandar de ajuste fotografico sobre el arreglo de pixeles.
- */
 export class BrightnessContrastFilter extends Filter {
   apply(imageData, brightness, contrast) {
     const data = imageData.data;
