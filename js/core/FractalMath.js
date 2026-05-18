@@ -15,6 +15,34 @@ export class FractalMath {
     const xMin = -2.5, xMax = 1.0;
     const yMin = -1.2, yMax = 1.2;
 
+    // Seleccionar funcion de iteracion una vez para evitar branching por pixel
+    let iterate;
+    if (type === 'burningship') {
+      iterate = (zx, zy, cx, cy) => {
+        const xtemp = zx * zx - zy * zy + cx;
+        return [Math.abs(xtemp), Math.abs(2 * zx * zy) + cy];
+      };
+    } else if (type === 'tricorn') {
+      iterate = (zx, zy, cx, cy) => {
+        const xtemp = zx * zx - zy * zy + cx;
+        return [xtemp, -2 * zx * zy + cy];
+      };
+    } else if (type === 'multibrot') {
+      // z^3 usando expansion algebraica directa (mucho mas rapido que polar)
+      iterate = (zx, zy, cx, cy) => {
+        const zx2 = zx * zx;
+        const zy2 = zy * zy;
+        const xtemp = zx * (zx2 - 3 * zy2) + cx;
+        const newZy = zy * (3 * zx2 - zy2) + cy;
+        return [xtemp, newZy];
+      };
+    } else {
+      iterate = (zx, zy, cx, cy) => {
+        const xtemp = zx * zx - zy * zy + cx;
+        return [xtemp, 2 * zx * zy + cy];
+      };
+    }
+
     for (let py = 0; py < this.height; py++) {
       for (let px = 0; px < this.width; px++) {
         const x0 = xMin + (px / this.width) * (xMax - xMin);
@@ -31,36 +59,11 @@ export class FractalMath {
           cx = x0; cy = y0;
         }
 
-        if (type === 'burningship') {
-          while (zx * zx + zy * zy < 4 && iter < maxIter) {
-            const xtemp = zx * zx - zy * zy + cx;
-            zy = Math.abs(2 * zx * zy) + cy;
-            zx = Math.abs(xtemp);
-            iter++;
-          }
-        } else if (type === 'tricorn') {
-          while (zx * zx + zy * zy < 4 && iter < maxIter) {
-            const xtemp = zx * zx - zy * zy + cx;
-            zy = -2 * zx * zy + cy;
-            zx = xtemp;
-            iter++;
-          }
-        } else if (type === 'multibrot') {
-          while (zx * zx + zy * zy < 4 && iter < maxIter) {
-            const r = Math.sqrt(zx * zx + zy * zy);
-            const theta = Math.atan2(zy, zx);
-            const xtemp = Math.pow(r, 3) * Math.cos(3 * theta) + cx;
-            zy = Math.pow(r, 3) * Math.sin(3 * theta) + cy;
-            zx = xtemp;
-            iter++;
-          }
-        } else {
-          while (zx * zx + zy * zy < 4 && iter < maxIter) {
-            const xtemp = zx * zx - zy * zy + cx;
-            zy = 2 * zx * zy + cy;
-            zx = xtemp;
-            iter++;
-          }
+        while (zx * zx + zy * zy < 4 && iter < maxIter) {
+          const [newZx, newZy] = iterate(zx, zy, cx, cy);
+          zx = newZx;
+          zy = newZy;
+          iter++;
         }
 
         const [r, g, b] = this._getColor(iter, maxIter);
