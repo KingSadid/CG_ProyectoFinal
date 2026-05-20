@@ -7,7 +7,7 @@ import { CONFIG } from '../config.js';
 export class BiomeRenderer {
     constructor(width, height) { this.width = width; this.height = height; }
 
-    render(grid, biomes, waterLevel = CONFIG.DEFAULT_WATER_LEVEL) {
+    render(grid, biomes, waterLevel = CONFIG.DEFAULT_WATER_LEVEL, alphas = null) {
         const imageData = new ImageData(this.width, this.height);
         const d = imageData.data;
         const c = {
@@ -18,6 +18,15 @@ export class BiomeRenderer {
             mountain: ColorUtils.hexToRgb(biomes.mountain),
             snow: ColorUtils.hexToRgb(biomes.snow),
         };
+
+        const a = alphas ? {
+            deepWater: alphas.deepWater ?? 1,
+            shallowWater: alphas.shallowWater ?? 1,
+            sand: alphas.sand ?? 1,
+            forest: alphas.forest ?? 1,
+            mountain: alphas.mountain ?? 1,
+            snow: alphas.snow ?? 1,
+        } : { deepWater: 1, shallowWater: 1, sand: 1, forest: 1, mountain: 1, snow: 1 };
 
         const tDeep = waterLevel * 0.5;
         const tShallow = waterLevel;
@@ -31,18 +40,37 @@ export class BiomeRenderer {
                 const h = Math.max(0, Math.min(1, grid[idx]));
                 const p = idx * 4;
                 let rgb;
+                let alpha;
 
-                if (h < tDeep) rgb = c.deepWater;
-                else if (h < tShallow) rgb = ColorUtils.lerpRgb(c.deepWater, c.shallowWater, (h - tDeep) / (tShallow - tDeep || 0.001));
-                else if (h < tSand) rgb = ColorUtils.lerpRgb(c.shallowWater, c.sand, (h - tShallow) / (tSand - tShallow || 0.001));
-                else if (h < tForest) rgb = ColorUtils.lerpRgb(c.sand, c.forest, (h - tSand) / (tForest - tSand || 0.001));
-                else if (h < tMountain) rgb = ColorUtils.lerpRgb(c.forest, c.mountain, (h - tForest) / (tMountain - tForest || 0.001));
-                else rgb = ColorUtils.lerpRgb(c.mountain, c.snow, Math.min(1, (h - tMountain) / (1 - tMountain || 0.001)));
+                if (h < tDeep) {
+                    rgb = c.deepWater;
+                    alpha = a.deepWater;
+                } else if (h < tShallow) {
+                    const t = (h - tDeep) / (tShallow - tDeep || 0.001);
+                    rgb = ColorUtils.lerpRgb(c.deepWater, c.shallowWater, t);
+                    alpha = a.deepWater + (a.shallowWater - a.deepWater) * t;
+                } else if (h < tSand) {
+                    const t = (h - tShallow) / (tSand - tShallow || 0.001);
+                    rgb = ColorUtils.lerpRgb(c.shallowWater, c.sand, t);
+                    alpha = a.shallowWater + (a.sand - a.shallowWater) * t;
+                } else if (h < tForest) {
+                    const t = (h - tSand) / (tForest - tSand || 0.001);
+                    rgb = ColorUtils.lerpRgb(c.sand, c.forest, t);
+                    alpha = a.sand + (a.forest - a.sand) * t;
+                } else if (h < tMountain) {
+                    const t = (h - tForest) / (tMountain - tForest || 0.001);
+                    rgb = ColorUtils.lerpRgb(c.forest, c.mountain, t);
+                    alpha = a.forest + (a.mountain - a.forest) * t;
+                } else {
+                    const t = Math.min(1, (h - tMountain) / (1 - tMountain || 0.001));
+                    rgb = ColorUtils.lerpRgb(c.mountain, c.snow, t);
+                    alpha = a.mountain + (a.snow - a.mountain) * t;
+                }
 
                 d[p] = ColorUtils.clampByte(rgb.r);
                 d[p + 1] = ColorUtils.clampByte(rgb.g);
                 d[p + 2] = ColorUtils.clampByte(rgb.b);
-                d[p + 3] = 255;
+                d[p + 3] = Math.round(Math.max(0, Math.min(1, alpha)) * 255);
             }
         }
         return imageData;

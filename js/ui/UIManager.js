@@ -9,6 +9,7 @@ export class UIManager {
         this.state = {
             roughness: CONFIG.DEFAULT_ROUGHNESS, waterLevel: CONFIG.DEFAULT_WATER_LEVEL,
             biomes: { deepWater: '#1a3a5c', shallowWater: '#2e6b8a', sand: '#c2a878', forest: '#3d6b46', mountain: '#6b5c4e', snow: '#e8e4df' },
+            alphas: { deepWater: 1, shallowWater: 1, sand: 1, forest: 1, mountain: 1, snow: 1 },
             brightness: 0, contrast: 0, noise: 0, lowPass: false, highPass: false,
             format: CONFIG.DEFAULT_FORMAT, quality: CONFIG.DEFAULT_QUALITY,
         };
@@ -23,6 +24,8 @@ export class UIManager {
             waterLevel: document.getElementById('waterLevel'), waterLevelValue: document.getElementById('waterLevelValue'),
             colors: { deepWater: document.getElementById('colorDeepWater'), shallowWater: document.getElementById('colorShallowWater'), sand: document.getElementById('colorSand'), forest: document.getElementById('colorForest'), mountain: document.getElementById('colorMountain'), snow: document.getElementById('colorSnow') },
             hexes: { deepWater: document.getElementById('hexDeepWater'), shallowWater: document.getElementById('hexShallowWater'), sand: document.getElementById('hexSand'), forest: document.getElementById('hexForest'), mountain: document.getElementById('hexMountain'), snow: document.getElementById('hexSnow') },
+            alphas: { deepWater: document.getElementById('alphaDeepWater'), shallowWater: document.getElementById('alphaShallowWater'), sand: document.getElementById('alphaSand'), forest: document.getElementById('alphaForest'), mountain: document.getElementById('alphaMountain'), snow: document.getElementById('alphaSnow') },
+            alphaValues: { deepWater: document.getElementById('alphaDeepWaterValue'), shallowWater: document.getElementById('alphaShallowWaterValue'), sand: document.getElementById('alphaSandValue'), forest: document.getElementById('alphaForestValue'), mountain: document.getElementById('alphaMountainValue'), snow: document.getElementById('alphaSnowValue') },
             canvasOverlay: document.getElementById('canvasOverlay'),
             seedDisplay: document.getElementById('seedDisplay'),
             statusDot: document.getElementById('statusDot'), statusText: document.getElementById('statusText'),
@@ -48,7 +51,15 @@ export class UIManager {
         Object.keys(this.els.colors).forEach((k) => {
             this.els.colors[k].addEventListener('input', (e) => {
                 this.state.biomes[k] = e.target.value;
-                this.els.hexes[k].textContent = e.target.value;
+                this.els.hexes[k].textContent = e.target.value.toUpperCase();
+                this.engine.requestRegenerateColors();
+            });
+        });
+
+        Object.keys(this.els.alphas).forEach((k) => {
+            this.els.alphas[k].addEventListener('input', (e) => {
+                this.state.alphas[k] = parseFloat(e.target.value);
+                this.els.alphaValues[k].textContent = Math.round(this.state.alphas[k] * 100) + '%';
                 this.engine.requestRegenerateColors();
             });
         });

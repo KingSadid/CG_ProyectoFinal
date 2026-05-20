@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AetherMap — Generador de Cartografía</title>
+    <title>Cartography Generator</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,7 +26,7 @@
                 <path d="M2 17l10 5 10-5"/>
                 <path d="M2 12l10 5 10-5"/>
             </svg>
-            <h1 class="brand-title">AetherMap</h1>
+            <h1 class="brand-title">Cartography Generator</h1>
         </div>
         <div class="header-meta">
             <span class="seed-badge" id="seedDisplay">Seed: —</span>
@@ -60,35 +60,59 @@
 
             <div class="panel-section">
                 <h2 class="panel-heading">Biomas</h2>
-                <div class="biome-control">
+                <div class="biome-control" style="--i:0">
                     <span class="biome-label">Agua profunda</span>
                     <input type="color" id="colorDeepWater" value="#1a3a5c">
-                    <span class="hex-preview" id="hexDeepWater">#1a3a5c</span>
+                    <span class="hex-preview" id="hexDeepWater">#1A3A5C</span>
+                    <div class="biome-alpha-wrap">
+                        <input type="range" class="biome-alpha" id="alphaDeepWater" min="0" max="1" step="0.05" value="1">
+                        <span class="alpha-value" id="alphaDeepWaterValue">100%</span>
+                    </div>
                 </div>
-                <div class="biome-control">
+                <div class="biome-control" style="--i:1">
                     <span class="biome-label">Agua</span>
                     <input type="color" id="colorShallowWater" value="#2e6b8a">
-                    <span class="hex-preview" id="hexShallowWater">#2e6b8a</span>
+                    <span class="hex-preview" id="hexShallowWater">#2E6B8A</span>
+                    <div class="biome-alpha-wrap">
+                        <input type="range" class="biome-alpha" id="alphaShallowWater" min="0" max="1" step="0.05" value="1">
+                        <span class="alpha-value" id="alphaShallowWaterValue">100%</span>
+                    </div>
                 </div>
-                <div class="biome-control">
+                <div class="biome-control" style="--i:2">
                     <span class="biome-label">Arena</span>
                     <input type="color" id="colorSand" value="#c2a878">
-                    <span class="hex-preview" id="hexSand">#c2a878</span>
+                    <span class="hex-preview" id="hexSand">#C2A878</span>
+                    <div class="biome-alpha-wrap">
+                        <input type="range" class="biome-alpha" id="alphaSand" min="0" max="1" step="0.05" value="1">
+                        <span class="alpha-value" id="alphaSandValue">100%</span>
+                    </div>
                 </div>
-                <div class="biome-control">
+                <div class="biome-control" style="--i:3">
                     <span class="biome-label">Bosque</span>
                     <input type="color" id="colorForest" value="#3d6b46">
-                    <span class="hex-preview" id="hexForest">#3d6b46</span>
+                    <span class="hex-preview" id="hexForest">#3D6B46</span>
+                    <div class="biome-alpha-wrap">
+                        <input type="range" class="biome-alpha" id="alphaForest" min="0" max="1" step="0.05" value="1">
+                        <span class="alpha-value" id="alphaForestValue">100%</span>
+                    </div>
                 </div>
-                <div class="biome-control">
+                <div class="biome-control" style="--i:4">
                     <span class="biome-label">Montaña</span>
                     <input type="color" id="colorMountain" value="#6b5c4e">
-                    <span class="hex-preview" id="hexMountain">#6b5c4e</span>
+                    <span class="hex-preview" id="hexMountain">#6B5C4E</span>
+                    <div class="biome-alpha-wrap">
+                        <input type="range" class="biome-alpha" id="alphaMountain" min="0" max="1" step="0.05" value="1">
+                        <span class="alpha-value" id="alphaMountainValue">100%</span>
+                    </div>
                 </div>
-                <div class="biome-control">
+                <div class="biome-control" style="--i:5">
                     <span class="biome-label">Nieve</span>
                     <input type="color" id="colorSnow" value="#e8e4df">
-                    <span class="hex-preview" id="hexSnow">#e8e4df</span>
+                    <span class="hex-preview" id="hexSnow">#E8E4DF</span>
+                    <div class="biome-alpha-wrap">
+                        <input type="range" class="biome-alpha" id="alphaSnow" min="0" max="1" step="0.05" value="1">
+                        <span class="alpha-value" id="alphaSnowValue">100%</span>
+                    </div>
                 </div>
             </div>
         </aside>

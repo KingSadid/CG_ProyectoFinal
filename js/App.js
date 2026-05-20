@@ -1,4 +1,4 @@
-// App.js — orquestador principal de la aplicación
+﻿// App.js — orquestador principal de la aplicación
 // une la generación fractal, el canvas, la UI y los filtros.
 
 import { CONFIG } from './config.js';
@@ -83,13 +83,13 @@ export class App {
     }
 
     _previewCurrentGrid() {
-        const imgData = this.biomeRenderer.render(this.ds.grid, this.ui.state.biomes, this.ui.state.waterLevel);
+        const imgData = this.biomeRenderer.render(this.ds.grid, this.ui.state.biomes, this.ui.state.waterLevel, this.ui.state.alphas);
         this.canvasManager.putOffscreenData(imgData);
         this.canvasManager.renderDirect();
     }
 
     _renderFinalMap() {
-        this.baseImageData = this.biomeRenderer.render(this.ds.grid, this.ui.state.biomes, this.ui.state.waterLevel);
+        this.baseImageData = this.biomeRenderer.render(this.ds.grid, this.ui.state.biomes, this.ui.state.waterLevel, this.ui.state.alphas);
         this.canvasManager.putOffscreenData(this.baseImageData);
         this.canvasManager.renderDirect();
     }
@@ -98,7 +98,7 @@ export class App {
 
     requestRegenerateColors() {
         if (!this.ds || !this.ds.isDone) return;
-        this.baseImageData = this.biomeRenderer.render(this.ds.grid, this.ui.state.biomes, this.ui.state.waterLevel);
+        this.baseImageData = this.biomeRenderer.render(this.ds.grid, this.ui.state.biomes, this.ui.state.waterLevel, this.ui.state.alphas);
         this.canvasManager.putOffscreenData(this.baseImageData);
         this.canvasManager.renderWithViewport(this.viewport);
     }

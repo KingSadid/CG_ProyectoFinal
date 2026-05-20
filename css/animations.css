@@ -1,4 +1,4 @@
-/* animations.css — micro-interacciones y transiciones */
+﻿/* animations.css — micro-interacciones y transiciones */
 
 /* entrada escalonada con transition (más interrumpible que keyframes) */
 .panel-left .panel-section,
@@ -105,15 +105,39 @@ input[type="range"]:hover {
     }
 }
 
-/* color pickers */
+/* color pickers — stagger entry (Emil Kowalski) */
+.biome-control {
+    opacity: 0;
+    transform: translateY(6px) scale(0.97);
+    transition: opacity 0.18s var(--ease-out), transform 0.18s var(--ease-out),
+                background 0.18s var(--ease-out), border-color 0.18s var(--ease-out);
+    transition-delay: calc(var(--i, 0) * 50ms);
+}
+
+body.is-loaded .biome-control {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+/* subsequent hovers skip stagger delay — instant feedback */
+.biome-control.transitioned {
+    transition-delay: 0ms;
+}
+
+/* native color pickers */
 input[type="color"] {
     transition: transform 0.15s var(--ease-out), box-shadow 0.15s;
     cursor: pointer;
 }
 
 input[type="color"]:hover {
-    transform: scale(1.04);
-    box-shadow: 0 0 0 2px var(--accent-dim);
+    transform: scale(1.08);
+    box-shadow: 0 0 0 3px var(--accent-dim);
+}
+
+/* alpha slider */
+.biome-alpha {
+    transition: opacity 0.15s;
 }
 
 /* select */
