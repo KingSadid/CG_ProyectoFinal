@@ -22,7 +22,7 @@ export class FrequencyFilter extends PixelFilterBase {
             return;
         }
 
-        // --- High-Pass via Unsharp Mask ---
+        //  High-Pass 
         const w = imageData.width;
         const h = imageData.height;
         const orig = imageData.data;
@@ -45,13 +45,11 @@ export class FrequencyFilter extends PixelFilterBase {
         }
     }
 
-    // método dummy para mantener la firma de la clase base (nunca se usa en modo high)
+    // método dummy para mantener la firma de la clase base
     processPixel(r, g, b, a) { return { r, g, b, a }; }
 
     // box blur 3x3 in-place sobre un Uint8ClampedArray
     _applyBoxBlur(data, w, h) {
-        // necesito un buffer auxiliar porque no puedo leer y escribir
-        // el mismo array simultáneamente sin contaminar los vecinos
         const tmp = new Uint8ClampedArray(data);
         for (let y = 0; y < h; y++) {
             for (let x = 0; x < w; x++) {

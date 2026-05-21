@@ -8,7 +8,6 @@ export class PRNG {
     }
 
     next() {
-        // x_{n+1} = (16807 * x_n) mod (2^31 - 1)
         this._seed = (16807 * this._seed) % 2147483647;
         return (this._seed - 1) / 2147483646;
     }
